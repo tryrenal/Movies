@@ -2,6 +2,7 @@ package com.redveloper.movies.api
 
 import com.redveloper.movies.domain.entity.Movies
 import com.redveloper.movies.domain.entity.ResultMovie
+import com.redveloper.movies.domain.entity.Reviews
 import com.redveloper.movies.domain.repository.api.MoviesApi
 import io.reactivex.Single
 import javax.inject.Inject
@@ -15,5 +16,9 @@ class MoviesApiImpl @Inject constructor(
 
     override fun getDetailMovie(id: Int): Single<ResultMovie> {
         return moviesApiService.getMovieDetail(id).map { it.toResultMovie() }
+    }
+
+    override fun getReviewMovie(id: Int): Single<Reviews> {
+        return moviesApiService.getReviewsMovie(id).map { it.toReviews() }
     }
 }

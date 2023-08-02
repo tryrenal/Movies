@@ -17,9 +17,11 @@ fun DetailScreen(
 ) {
 
     val detailMovieEvent = viewModel.detailMovieEvent.observeAsState()
+    val reviewMovieEvent = viewModel.reviewMovieEvent.observeAsState()
 
     LaunchedEffect(true){
         viewModel.getDetailMovie(movieId)
+        viewModel.getReviewMovie(movieId)
     }
 
     Column(
@@ -29,6 +31,12 @@ fun DetailScreen(
     ) {
         detailMovieEvent.value?.contentIfNotHaveBeenHandle?.let { movies ->
             Text(text = "title: ${movies.title}")
+        }
+
+        reviewMovieEvent.value?.contentIfNotHaveBeenHandle?.let { reviews ->
+            reviews.forEach {
+                Text(text = "review: ${it.author}")
+            }
         }
     }
 }
