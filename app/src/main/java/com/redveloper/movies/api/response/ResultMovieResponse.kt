@@ -29,7 +29,22 @@ data class ResultMovieResponse(
     @SerializedName("vote_average")
     val voteAverage: Double? = null,
     @SerializedName("vote_count")
-    val voteCount: Int? = null
+    val voteCount: Int? = null,
+
+    @SerializedName("budget")
+    val budget: Int? = null,
+    @SerializedName("homepage")
+    val homepage: String? = null,
+    @SerializedName("imdb_id")
+    val imdbId: String? = null,
+    @SerializedName("revenue")
+    val revenue: Int? = null,
+    @SerializedName("runtime")
+    val runtime: Int? = null,
+    @SerializedName("status")
+    val status: String? = null,
+    @SerializedName("tagline")
+    val tagline: String? = null
 ) {
     fun toResultMovie(): ResultMovie{
         return ResultMovie(
@@ -45,7 +60,14 @@ data class ResultMovieResponse(
             title = title,
             video = video ?: false,
             voteAverage = voteAverage ?: 0.0,
-            voteCount = voteCount ?: 0
+            voteCount = voteCount ?: 0,
+            budget = budget ?: 0,
+            homepage = homepage,
+            imdbId = imdbId,
+            revenue = revenue ?: 0,
+            runtime = runtime ?: 0,
+            status = status,
+            tagline = tagline
         )
     }
 }

@@ -1,25 +1,26 @@
 package com.redveloper.movies.domain.usecase
 
+import android.util.Log
 import com.redveloper.movies.domain.entity.ResultMovie
 import com.redveloper.movies.domain.repository.MovieRepository
 import com.redveloper.movies.utils.RxSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
-class GetMoviesUseCase @Inject constructor(
+class GetDetailMovieUseCase @Inject constructor(
     private val movieRepository: MovieRepository,
     private val schedulers: RxSchedulers
 ) {
+
     private val disposables = CompositeDisposable()
 
-    fun execute(output: Output){
-        val disposable = movieRepository.getMovies()
+    fun execute(input: Input, output: Output){
+        val disposable = movieRepository.getDetailMovie(input.movieId)
             .observeOn(schedulers.ui())
             .subscribe({
-                val data = it.reslutMovie ?: listOf()
-                output.success?.invoke(data)
+                output.success?.invoke(it)
             }, {
-
+                Log.i("errorGetDetail", it.message.toString())
             })
         disposables.add(disposable)
     }
@@ -28,7 +29,11 @@ class GetMoviesUseCase @Inject constructor(
         disposables.clear()
     }
 
+    data class Input(
+        val movieId: Int
+    )
+
     data class Output(
-        val success: ((List<ResultMovie>) -> Unit)? = null
+        val success: ((ResultMovie) -> Unit)? = null
     )
 }

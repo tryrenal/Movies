@@ -15,13 +15,12 @@ class HomeViewModel @Inject constructor(
     val moviesEvent = MutableLiveData<Event<List<ResultMovie>>>()
 
     fun getMovies(){
-        getMoviesUseCase.execute()
-        getMoviesUseCase.output = GetMoviesUseCase.Output(
+        getMoviesUseCase.execute(GetMoviesUseCase.Output(
             success = {
                 Log.i("dataMovies", it.toString())
                 moviesEvent.value = Event(it)
             }
-        )
+        ))
     }
 
     override fun onCleared() {
