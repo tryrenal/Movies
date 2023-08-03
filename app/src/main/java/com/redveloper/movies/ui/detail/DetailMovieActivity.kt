@@ -32,7 +32,9 @@ class DetailMovieActivity : ComponentActivity() {
         inject()
 
         setContent {
-            MoviesTheme {
+            MoviesTheme(
+                darkTheme = false
+            ) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),

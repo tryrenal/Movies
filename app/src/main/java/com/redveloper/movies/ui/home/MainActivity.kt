@@ -31,7 +31,9 @@ class MainActivity : ComponentActivity() {
         inject()
 
         setContent {
-            MoviesTheme {
+            MoviesTheme(
+                darkTheme = false
+            ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

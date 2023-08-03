@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -40,6 +41,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import com.redveloper.movies.R
 import com.redveloper.movies.domain.entity.DetailMovie
+import com.redveloper.movies.ui.detail.model.ReviewMovieUiModel
 import com.redveloper.movies.utils.Constant
 import java.util.Date
 
@@ -53,12 +55,13 @@ fun DetailScreen(
     val reviewMovieEvent by viewModel.reviewMovieEvent.observeAsState()
     val errorEvent  by viewModel.errorEvent.observeAsState()
 
-    val movieData = remember{
-        mutableStateOf<DetailMovie>(DetailMovie())
-    }
+    val movieData = remember{ mutableStateOf<DetailMovie>(DetailMovie()) }
+    val reviewUsers = remember { mutableListOf<ReviewMovieUiModel>() }
 
     LaunchedEffect(true){
         viewModel.getDetailMovie(movieId)
+
+        reviewUsers.clear()
         viewModel.getReviewMovie(movieId)
     }
 
@@ -73,20 +76,26 @@ fun DetailScreen(
     }
 
     reviewMovieEvent?.contentIfNotHaveBeenHandle?.let { reviews ->
-
+        val items = reviews.map { ReviewMovieUiModel(
+            author = it.author ?: "",
+            content = it.content ?: ""
+        ) }
+        reviewUsers.addAll(items)
     }
 
     DetailContent(
         modifier = Modifier
             .fillMaxSize(),
-        data = movieData.value
+        data = movieData.value,
+        reviews = reviewUsers
     )
 }
 
 @Composable
 fun DetailContent(
     modifier: Modifier = Modifier,
-    data: DetailMovie
+    data: DetailMovie,
+    reviews: List<ReviewMovieUiModel>
 ){
     LazyColumn(
         modifier = modifier,
@@ -145,7 +154,7 @@ fun DetailContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(
-                            top = 20.dp,
+                            top = 10.dp,
                             start = 8.dp,
                             end = 8.dp
                         )
@@ -162,6 +171,36 @@ fun DetailContent(
                             end = 8.dp
                         )
                         .height(300.dp)
+                )
+            }
+
+            item {
+                Text(
+                    text = "Reviews",
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            top = 10.dp,
+                            start = 8.dp,
+                            end = 8.dp,
+                        )
+                )
+            }
+
+            items(reviews){
+                CardReviewUser(
+                    modifier = Modifier
+                        .padding(
+                            top = 5.dp,
+                            start = 8.dp,
+                            end = 8.dp,
+                            bottom = 10.dp
+                        ),
+                    data = it
                 )
             }
         }
@@ -185,11 +224,20 @@ fun PreviewDetailContent(){
         tagline = "It is good movie"
     )
 
+    val dataReview = ReviewMovieUiModel(
+        author = "Nama Author",
+        content = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
+    )
+    val reviews = listOf(
+        dataReview, dataReview, dataReview, dataReview
+    )
+
     MaterialTheme{
         DetailContent(
             modifier = Modifier
                 .fillMaxSize(),
-            data = data
+            data = data,
+            reviews = reviews
         )
     }
 }
@@ -288,5 +336,55 @@ fun CardTraillerMovie(
                 )
                 view
             })
+    }
+}
+
+@Composable
+fun CardReviewUser(
+    modifier: Modifier = Modifier,
+    data: ReviewMovieUiModel
+){
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.Black.copy(alpha = 0.4f)
+        )
+    ){
+        Text(
+            modifier = Modifier
+                .padding(top = 8.dp, start = 8.dp, end = 8.dp),
+            text = data.author,
+            style = TextStyle(
+                fontWeight = FontWeight.Normal,
+                fontSize = 16.sp
+            ),
+            color = Color.White,
+        )
+
+        Text(
+            modifier = Modifier
+                .padding(top = 4.dp, start = 8.dp, end = 8.dp, bottom = 8.dp),
+            text = data.content,
+            style = TextStyle(
+                fontWeight = FontWeight.Light,
+                fontSize = 12.sp
+            ),
+            color = Color.White,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewCardReviewUser(){
+    val data = ReviewMovieUiModel(
+        author = "Nama Author",
+        content = "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout."
+    )
+    MaterialTheme() {
+        CardReviewUser(data = data)
     }
 }
