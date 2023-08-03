@@ -18,12 +18,10 @@ fun DetailScreen(
 
     val detailMovieEvent = viewModel.detailMovieEvent.observeAsState()
     val reviewMovieEvent = viewModel.reviewMovieEvent.observeAsState()
-    val traillerEvent = viewModel.trailerMovieEvent.observeAsState()
 
     LaunchedEffect(true){
         viewModel.getDetailMovie(movieId)
         viewModel.getReviewMovie(movieId)
-        viewModel.getTrailler(movieId)
     }
 
     Column(
@@ -31,18 +29,14 @@ fun DetailScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        detailMovieEvent.value?.contentIfNotHaveBeenHandle?.let { movies ->
-            Text(text = "title: ${movies.title}")
-        }
-
         reviewMovieEvent.value?.contentIfNotHaveBeenHandle?.let { reviews ->
             reviews.forEach {
                 Text(text = "review: ${it.author}")
             }
         }
-        
-        traillerEvent.value?.contentIfNotHaveBeenHandle?.let { trailler ->
-            Text(text = "trailler: ${trailler.key}")
+
+        detailMovieEvent.value?.contentIfNotHaveBeenHandle?.let { movies ->
+            Text(text = "title: ${movies.originalTitle} & youtubeKey: ${movies.youtubeKey}")
         }
     }
 }

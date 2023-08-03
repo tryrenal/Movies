@@ -1,6 +1,7 @@
 package com.redveloper.movies.domain.usecase
 
 import android.util.Log
+import com.redveloper.movies.domain.entity.DetailMovie
 import com.redveloper.movies.domain.entity.ResultMovie
 import com.redveloper.movies.domain.repository.MovieRepository
 import com.redveloper.movies.utils.RxSchedulers
@@ -34,6 +35,6 @@ class GetDetailMovieUseCase @Inject constructor(
     )
 
     data class Output(
-        val success: ((ResultMovie) -> Unit)? = null
+        val success: ((DetailMovie) -> Unit)? = null
     )
 }

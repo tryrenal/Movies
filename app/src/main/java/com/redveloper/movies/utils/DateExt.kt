@@ -17,3 +17,10 @@ fun convertDateStringToDate(inputDateString: String): Date? {
         null
     }
 }
+
+
+fun convertDateToStringDate(inputDate: Date): String {
+    val outputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+    outputFormat.timeZone = TimeZone.getTimeZone("UTC")
+    return outputFormat.format(inputDate)
+}
