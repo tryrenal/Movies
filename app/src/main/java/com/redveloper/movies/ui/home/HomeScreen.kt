@@ -9,9 +9,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -20,7 +24,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +43,7 @@ import coil.compose.AsyncImage
 import com.redveloper.movies.R
 import com.redveloper.movies.ui.home.model.MoviesUiModel
 import com.redveloper.movies.utils.Constant
+import dagger.Lazy
 
 
 @Composable
@@ -46,24 +54,31 @@ fun HomeScreen(
     val errorEvents = viewModel.showErrorEvent.observeAsState()
     val loadingEvents = viewModel.loadingEvent.observeAsState()
 
+    val moviesUiModel = remember { mutableListOf<MoviesUiModel>() }
+
     LaunchedEffect(true){
+        moviesUiModel.clear()
         viewModel.getMovies()
     }
 
     movieEvents.value?.contentIfNotHaveBeenHandle?.let {
-        val moviesUiModel = it.map {
+        val items = it.map {
             MoviesUiModel(
                 urlImage = Constant.BASE_URL_IMAGE + it.backdropPath,
                 movieTitle = it.originalTitle ?: ""
             )
         }
-
-        HomeContent(
-            listMovie = moviesUiModel,
-            modifier = Modifier
-                .fillMaxSize()
-        )
+        moviesUiModel.addAll(items)
     }
+
+    HomeContent(
+        listMovie = moviesUiModel,
+        modifier = Modifier
+            .fillMaxSize(),
+        scrollToBottomCallback = {
+            viewModel.loadMoreMovies()
+        }
+    )
 
     loadingEvents.value?.contentIfNotHaveBeenHandle?.let { show ->
         if (show){
@@ -82,12 +97,16 @@ fun HomeScreen(
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
-    listMovie: List<MoviesUiModel>
+    listMovie: List<MoviesUiModel>,
+    scrollToBottomCallback: (() -> Unit)? = null
 ){
+    val listState = rememberLazyGridState()
+
     LazyVerticalGrid(
         modifier = modifier
             .fillMaxSize(),
         columns = GridCells.Fixed(2),
+        state = listState,
         content = {
             itemsIndexed(items = listMovie){ index, item ->
                 CardMovie(
@@ -99,6 +118,33 @@ fun HomeContent(
             }
         }
     )
+
+    listState.OnBottomReached {
+        scrollToBottomCallback?.invoke()
+    }
+}
+
+@Composable
+private fun LazyGridState.OnBottomReached(
+    buffer : Int = 0,
+    onLoadMore : () -> Unit
+) {
+    require(buffer >= 0) { "buffer cannot be negative, but was $buffer" }
+
+    val shouldLoadMore = remember {
+        derivedStateOf {
+            val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
+                ?:
+                return@derivedStateOf true
+
+            lastVisibleItem.index >=  layoutInfo.totalItemsCount - 1 - buffer
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore){
+        snapshotFlow { shouldLoadMore.value }
+            .collect { if (it) onLoadMore() }
+    }
 }
 
 @Preview(showBackground = true)

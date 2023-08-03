@@ -22,7 +22,8 @@ class HomeViewModel @Inject constructor(
 
     fun getMovies(){
         setLoading(true)
-        getMoviesUseCase.execute(GetMoviesUseCase.Output(
+        getMoviesUseCase.execute()
+        getMoviesUseCase.output = GetMoviesUseCase.Output(
             success = {
                 setLoading(false)
                 Log.i("dataMovies", it.toString())
@@ -33,7 +34,22 @@ class HomeViewModel @Inject constructor(
                 Log.i("dataMovies", it)
                 showErrorEvent.value = Event(it)
             }
-        ))
+        )
+    }
+
+    fun loadMoreMovies(){
+        setLoading(true)
+        getMoviesUseCase.loadMore()
+        getMoviesUseCase.output = GetMoviesUseCase.Output(
+            success = {
+                setLoading(false)
+                moviesEvent.value = Event(it)
+            },
+            error = {
+                setLoading(false)
+                showErrorEvent.value = Event(it)
+            }
+        )
     }
 
     override fun onCleared() {
