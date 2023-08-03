@@ -19,8 +19,8 @@ class MovieRepository @Inject constructor(
     private val schedulers: RxSchedulers
 ) {
 
-    fun getMovies(): Single<Movies>{
-        return moviesApi.getMovies()
+    fun getMovies(page: Int): Single<Movies>{
+        return moviesApi.getMovies(page)
             .subscribeOn(schedulers.network())
     }
 

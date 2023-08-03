@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    val viewModel: DetailViewModel by viewModels { viewModelFactory }
+    val viewModel: HomeViewModel by viewModels { viewModelFactory }
 
     fun inject(){
         (application as MyApp).applicationComponent.inject(this)
@@ -43,8 +43,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    HomeScreen(viewModel)
-                    DetailScreen(movieId = 298618, viewModel = viewModel)
+                    HomeScreen(viewModel)
+//                    DetailScreen(movieId = 298618, viewModel = viewModel)
                 }
             }
         }

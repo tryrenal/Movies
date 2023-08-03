@@ -12,14 +12,44 @@ class GetMoviesUseCase @Inject constructor(
 ) {
     private val disposables = CompositeDisposable()
 
-    fun execute(output: Output){
-        val disposable = movieRepository.getMovies()
-            .observeOn(schedulers.ui())
-            .subscribe({
-                val data = it.reslutMovie ?: listOf()
-                output.success?.invoke(data)
-            }, {
+    private var nextPage = 1
+    private var isAbleToLoadMore: Boolean = false
+    private var isExecuting: Boolean = false
 
+    var output: Output? = null
+
+    fun execute(){
+        if (isExecuting) return
+
+        nextPage = 1
+        getMovies(nextPage)
+    }
+
+    fun loadMore(){
+        if (!isExecuting && isAbleToLoadMore){
+            getMovies(nextPage)
+        }
+    }
+
+    private fun getMovies(page: Int){
+        val disposable = movieRepository
+            .getMovies(page)
+            .observeOn(schedulers.ui())
+            .doOnSubscribe {
+                isExecuting = true
+            }
+            .doFinally {
+                isExecuting = false
+            }
+            .subscribe({
+                nextPage += 1
+                isAbleToLoadMore = it.totalPages >= nextPage
+                val data = it.reslutMovie ?: listOf()
+                output?.success?.invoke(data)
+            }, {
+                it.message?.let{ message ->
+                    output?.error?.invoke(message)
+                }
             })
         disposables.add(disposable)
     }
@@ -29,6 +59,7 @@ class GetMoviesUseCase @Inject constructor(
     }
 
     data class Output(
-        val success: ((List<ResultMovie>) -> Unit)? = null
+        val success: ((List<ResultMovie>) -> Unit)? = null,
+        val error: ((message: String) -> Unit)? = null
     )
 }

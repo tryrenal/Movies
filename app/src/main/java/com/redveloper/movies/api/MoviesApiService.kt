@@ -7,11 +7,14 @@ import com.redveloper.movies.api.response.TrailersResponse
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface MoviesApiService{
 
-    @GET("/3/discover/movie")
-    fun getListMovies() : Single<MoviesResponse>
+    @GET("/3/movie/now_playing")
+    fun getListMovies(
+        @Query("page") page: Int
+    ) : Single<MoviesResponse>
 
     @GET("3/movie/{movie_id}")
     fun getMovieDetail(
