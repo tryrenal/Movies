@@ -13,12 +13,25 @@ class HomeViewModel @Inject constructor(
 ): ViewModel() {
 
     val moviesEvent = MutableLiveData<Event<List<ResultMovie>>>()
+    val showErrorEvent = MutableLiveData<Event<String>>()
+    val loadingEvent = MutableLiveData<Event<Boolean>>()
+
+    private fun setLoading(show: Boolean){
+        loadingEvent.value = Event(show)
+    }
 
     fun getMovies(){
+        setLoading(true)
         getMoviesUseCase.execute(GetMoviesUseCase.Output(
             success = {
+                setLoading(false)
                 Log.i("dataMovies", it.toString())
                 moviesEvent.value = Event(it)
+            },
+            error = {
+                setLoading(false)
+                Log.i("dataMovies", it)
+                showErrorEvent.value = Event(it)
             }
         ))
     }

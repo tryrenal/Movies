@@ -19,7 +19,9 @@ class GetMoviesUseCase @Inject constructor(
                 val data = it.reslutMovie ?: listOf()
                 output.success?.invoke(data)
             }, {
-
+                it.message?.let{ message ->
+                    output.error?.invoke(message)
+                }
             })
         disposables.add(disposable)
     }
@@ -29,6 +31,7 @@ class GetMoviesUseCase @Inject constructor(
     }
 
     data class Output(
-        val success: ((List<ResultMovie>) -> Unit)? = null
+        val success: ((List<ResultMovie>) -> Unit)? = null,
+        val error: ((message: String) -> Unit)? = null
     )
 }
