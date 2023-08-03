@@ -17,6 +17,7 @@ class DetailViewModel @Inject constructor(
 
     val detailMovieEvent = MutableLiveData<Event<DetailMovie>>()
     val reviewMovieEvent = MutableLiveData<Event<List<ResultReview>>>()
+    val errorEvent = MutableLiveData<Event<String>>()
 
     fun getDetailMovie(movieId: Int){
         getDetailMovieUseCase.execute(
@@ -27,6 +28,9 @@ class DetailViewModel @Inject constructor(
                 success = {
                     Log.i("dataDetailMovie", it.toString())
                     detailMovieEvent.value = Event(it)
+                },
+                error = {
+                    errorEvent.value = Event(it)
                 }
             )
         )
@@ -39,6 +43,9 @@ class DetailViewModel @Inject constructor(
                 success = {
                     Log.i("dataReviewMovie", it.toString())
                     reviewMovieEvent.value = Event(it)
+                },
+                error = {
+                    errorEvent.value = Event(it)
                 }
             )
         )
