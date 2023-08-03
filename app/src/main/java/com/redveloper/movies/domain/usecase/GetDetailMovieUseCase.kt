@@ -21,7 +21,9 @@ class GetDetailMovieUseCase @Inject constructor(
             .subscribe({
                 output.success?.invoke(it)
             }, {
-                Log.i("errorGetDetail", it.message.toString())
+                it.message?.let { message ->
+                    output.error?.invoke(message)
+                }
             })
         disposables.add(disposable)
     }
@@ -35,6 +37,7 @@ class GetDetailMovieUseCase @Inject constructor(
     )
 
     data class Output(
-        val success: ((DetailMovie) -> Unit)? = null
+        val success: ((DetailMovie) -> Unit)? = null,
+        val error: ((message: String) -> Unit)? = null
     )
 }

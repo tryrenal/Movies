@@ -22,8 +22,11 @@ class GetReviewMovieUseCase @Inject constructor(
                 val data = it.result ?: listOf()
                 output.success?.invoke(data)
             }, {
-                Log.i("errorGetReview", it.message.toString())
+                it.message?.let { message ->
+                    output.error?.invoke(message)
+                }
             })
+        disposables.add(disposable)
     }
 
     fun dispose(){
@@ -35,6 +38,7 @@ class GetReviewMovieUseCase @Inject constructor(
     )
 
     data class Output(
-        val success: ((List<ResultReview>) -> Unit)? = null
+        val success: ((List<ResultReview>) -> Unit)? = null,
+        val error: ((message: String) -> Unit)? = null
     )
 }

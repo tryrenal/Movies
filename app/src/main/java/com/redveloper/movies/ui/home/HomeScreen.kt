@@ -2,6 +2,7 @@ package com.redveloper.movies.ui.home
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,7 +49,8 @@ import dagger.Lazy
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
+    toDetailMovie: ((movieId: Int) -> Unit)
 ){
     val movieEvents = viewModel.moviesEvent.observeAsState()
     val errorEvents = viewModel.showErrorEvent.observeAsState()
@@ -65,7 +67,8 @@ fun HomeScreen(
         val items = it.map {
             MoviesUiModel(
                 urlImage = Constant.BASE_URL_IMAGE + it.backdropPath,
-                movieTitle = it.originalTitle ?: ""
+                movieTitle = it.originalTitle ?: "",
+                id = it.id
             )
         }
         moviesUiModel.addAll(items)
@@ -77,6 +80,9 @@ fun HomeScreen(
             .fillMaxSize(),
         scrollToBottomCallback = {
             viewModel.loadMoreMovies()
+        },
+        onClickMovie = { id ->
+            toDetailMovie(id)
         }
     )
 
@@ -98,7 +104,8 @@ fun HomeScreen(
 fun HomeContent(
     modifier: Modifier = Modifier,
     listMovie: List<MoviesUiModel>,
-    scrollToBottomCallback: (() -> Unit)? = null
+    scrollToBottomCallback: (() -> Unit)? = null,
+    onClickMovie: ((movieId: Int) -> Unit)? = null
 ){
     val listState = rememberLazyGridState()
 
@@ -114,6 +121,9 @@ fun HomeContent(
                     text = item.movieTitle,
                     modifier = Modifier
                         .padding(bottom = 10.dp)
+                        .clickable {
+                            onClickMovie?.invoke(item.id)
+                        }
                 )
             }
         }
@@ -152,11 +162,12 @@ private fun LazyGridState.OnBottomReached(
 fun PreviewHomeContent(){
     val imageUrl = "https://image.tmdb.org/t/p/original/bOGkgRGdhrBYJSLpXaxhXVstddV.jpg"
     val datas = listOf(
-        MoviesUiModel(urlImage = imageUrl, movieTitle = "Title 1"),
-        MoviesUiModel(urlImage = imageUrl, movieTitle = "Title 1"),
-        MoviesUiModel(urlImage = imageUrl, movieTitle = "Title 1"),
-        MoviesUiModel(urlImage = imageUrl, movieTitle = "Title 1"),
-        MoviesUiModel(urlImage = imageUrl, movieTitle = "Title 1"),
+        MoviesUiModel(urlImage = imageUrl, movieTitle = "Title 1", id = 1),
+        MoviesUiModel(urlImage = imageUrl, movieTitle = "Title 1", id = 1),
+        MoviesUiModel(urlImage = imageUrl, movieTitle = "Title 1", id = 1),
+        MoviesUiModel(urlImage = imageUrl, movieTitle = "Title 1", id = 1),
+        MoviesUiModel(urlImage = imageUrl, movieTitle = "Title 1", id = 1),
+        MoviesUiModel(urlImage = imageUrl, movieTitle = "Title 1", id = 1),
     )
     MaterialTheme {
         HomeContent(

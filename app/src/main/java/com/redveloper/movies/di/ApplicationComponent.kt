@@ -1,8 +1,9 @@
 package com.redveloper.movies.di
 
 import androidx.lifecycle.ViewModelProvider
-import com.redveloper.movies.MainActivity
+import com.redveloper.movies.ui.home.MainActivity
 import com.redveloper.movies.MyApp
+import com.redveloper.movies.ui.detail.DetailMovieActivity
 import dagger.BindsInstance
 import dagger.Component
 import retrofit2.Retrofit
@@ -31,4 +32,5 @@ interface ApplicationComponent {
     fun viewModelProviderFactory(): ViewModelProvider.Factory
 
     fun inject(mainActivity: MainActivity)
+    fun inject(detailMovieActivity: DetailMovieActivity)
 }

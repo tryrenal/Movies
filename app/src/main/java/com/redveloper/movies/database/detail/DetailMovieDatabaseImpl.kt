@@ -21,7 +21,7 @@ class DetailMovieDatabaseImpl @Inject constructor(
             originalTitle = data.originalTitle,
             overview = data.overview,
             posterPath = data.posterPath,
-            releaseDate = convertDateToStringDate(data.releaseDate),
+            releaseDate = convertDateToStringDate(data.releaseDate ?: Date()),
             status = data.status,
             tagline = data.tagline
         )
