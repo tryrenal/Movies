@@ -1,6 +1,5 @@
 package com.redveloper.movies.ui.detail
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.redveloper.movies.domain.entity.DetailMovie
@@ -26,7 +25,6 @@ class DetailViewModel @Inject constructor(
             ),
             GetDetailMovieUseCase.Output(
                 success = {
-                    Log.i("dataDetailMovie", it.toString())
                     detailMovieEvent.value = Event(it)
                 },
                 error = {
@@ -41,7 +39,6 @@ class DetailViewModel @Inject constructor(
             GetReviewMovieUseCase.Input(movieId = movieId),
             GetReviewMovieUseCase.Output(
                 success = {
-                    Log.i("dataReviewMovie", it.toString())
                     reviewMovieEvent.value = Event(it)
                 },
                 error = {
@@ -53,7 +50,7 @@ class DetailViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        getDetailMovieUseCase.dispose()
-        getReviewMovieUseCase.dispose()
+        getDetailMovieUseCase.clear()
+        getReviewMovieUseCase.clear()
     }
 }

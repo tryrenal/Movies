@@ -1,6 +1,5 @@
 package com.redveloper.movies.ui.home
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.redveloper.movies.domain.entity.ResultMovie
@@ -20,40 +19,31 @@ class HomeViewModel @Inject constructor(
         loadingEvent.value = Event(show)
     }
 
-    fun getMovies(){
-        setLoading(true)
-        getMoviesUseCase.execute()
+    init {
         getMoviesUseCase.output = GetMoviesUseCase.Output(
             success = {
                 setLoading(false)
-                Log.i("dataMovies", it.toString())
                 moviesEvent.value = Event(it)
             },
             error = {
                 setLoading(false)
-                Log.i("dataMovies", it)
                 showErrorEvent.value = Event(it)
             }
         )
+    }
+
+    fun getMovies(){
+        setLoading(true)
+        getMoviesUseCase.execute()
     }
 
     fun loadMoreMovies(){
         setLoading(true)
         getMoviesUseCase.loadMore()
-        getMoviesUseCase.output = GetMoviesUseCase.Output(
-            success = {
-                setLoading(false)
-                moviesEvent.value = Event(it)
-            },
-            error = {
-                setLoading(false)
-                showErrorEvent.value = Event(it)
-            }
-        )
     }
 
     override fun onCleared() {
         super.onCleared()
-        getMoviesUseCase.dispose()
+        getMoviesUseCase.clear()
     }
 }

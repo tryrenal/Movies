@@ -2,6 +2,8 @@ package com.redveloper.movies.di
 
 import android.content.Context
 import com.redveloper.movies.MyApp
+import com.redveloper.movies.domain.usecase.base.BaseUseCaseImpl
+import com.redveloper.movies.domain.usecase.base.IBaseUseaCase
 import com.redveloper.movies.utils.RxSchedulers
 import com.redveloper.movies.utils.RxSchedulersImpl
 import dagger.Module
@@ -17,4 +19,12 @@ class ApplicationModule {
     @Provides
     @Singleton
     fun provideScheduler(): RxSchedulers = RxSchedulersImpl()
+
+    @Provides
+    fun provideBaseUseCase(
+        context: Context,
+        schedulers: RxSchedulers,
+    ): IBaseUseaCase {
+        return BaseUseCaseImpl(schedulers, context)
+    }
 }
