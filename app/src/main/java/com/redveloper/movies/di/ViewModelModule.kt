@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.redveloper.movies.ui.ViewModelFactory
 import com.redveloper.movies.ui.detail.DetailViewModel
+import com.redveloper.movies.ui.genre.GenreViewModel
 import com.redveloper.movies.ui.home.HomeViewModel
 import dagger.Binds
 import dagger.Module
@@ -26,4 +27,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(DetailViewModel::class)
     abstract fun bindDetailViewModel(detailViewModel: DetailViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(GenreViewModel::class)
+    abstract fun bindGenreViewModel(genreViewModel: GenreViewModel): ViewModel
 }

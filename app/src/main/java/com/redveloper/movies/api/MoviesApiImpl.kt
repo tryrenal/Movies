@@ -1,5 +1,6 @@
 package com.redveloper.movies.api
 
+import com.redveloper.movies.domain.entity.Genre
 import com.redveloper.movies.domain.entity.Movies
 import com.redveloper.movies.domain.entity.ResultMovie
 import com.redveloper.movies.domain.entity.Reviews
@@ -11,8 +12,8 @@ import javax.inject.Inject
 class MoviesApiImpl @Inject constructor(
     private val moviesApiService: MoviesApiService
 ): MoviesApi {
-    override fun getMovies(page: Int): Single<Movies> {
-        return moviesApiService.getListMovies(page).map { it.toMovies() }
+    override fun getMovies(page: Int, genreId: Int): Single<Movies> {
+        return moviesApiService.getListMovies(page, genreId).map { it.toMovies() }
     }
 
     override fun getDetailMovie(id: Int): Single<ResultMovie> {
@@ -32,5 +33,10 @@ class MoviesApiImpl @Inject constructor(
                 Trailer()
             }
         }
+    }
+
+    override fun getGenres(): Single<List<Genre>> {
+        return moviesApiService.getGenres()
+            .map { it.genres.map { it.toGenre() } }
     }
 }

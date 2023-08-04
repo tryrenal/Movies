@@ -1,6 +1,7 @@
 package com.redveloper.movies.domain.repository
 
 import com.redveloper.movies.domain.entity.DetailMovie
+import com.redveloper.movies.domain.entity.Genre
 import com.redveloper.movies.domain.entity.Movies
 import com.redveloper.movies.domain.entity.ResultMovie
 import com.redveloper.movies.domain.entity.Reviews
@@ -19,8 +20,8 @@ class MovieRepository @Inject constructor(
     private val schedulers: RxSchedulers
 ) {
 
-    fun getMovies(page: Int): Single<Movies>{
-        return moviesApi.getMovies(page)
+    fun getMovies(page: Int, genreId: Int): Single<Movies>{
+        return moviesApi.getMovies(page, genreId)
             .subscribeOn(schedulers.network())
     }
 
@@ -64,9 +65,13 @@ class MovieRepository @Inject constructor(
         }
     }
 
-
     fun getReviewMovie(id: Int): Single<Reviews>{
         return moviesApi.getReviewMovie(id)
+            .subscribeOn(schedulers.network())
+    }
+
+    fun getGenreMovie(): Single<List<Genre>>{
+        return moviesApi.getGenres()
             .subscribeOn(schedulers.network())
     }
 }

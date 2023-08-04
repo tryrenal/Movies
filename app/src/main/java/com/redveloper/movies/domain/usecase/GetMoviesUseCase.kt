@@ -14,26 +14,46 @@ class GetMoviesUseCase @Inject constructor(
 ): BaseUseCase(baseUseCaseImpl) {
     private var nextPage = 1
     private var isAbleToLoadMore: Boolean = false
+    private var lastInput: Input? = null
     var output: Output? = null
 
-    fun execute(){
+    fun execute(genreId: Int){
         if (isExecuting) return
 
         nextPage = 1
-        getMovies(nextPage)
+        lastInput = Input(
+            page = nextPage,
+            genreId = genreId
+        )
+        getMovies(
+            Input(
+                page = nextPage,
+                genreId = genreId
+            )
+        )
     }
 
     fun loadMore(){
         if (!isExecuting && isAbleToLoadMore){
-            getMovies(nextPage)
+            lastInput?.let { input ->
+                getMovies(
+                    Input(
+                        page = nextPage,
+                        genreId = input.genreId
+                    )
+                )
+            }
         }
     }
 
-    private fun getMovies(page: Int){
+    private fun getMovies(input: Input){
         allowExecute(
             allow = {
                 addDisposable(movieRepository
-                    .getMovies(page)
+                    .getMovies(
+                        page = input.page,
+                        genreId = input.genreId
+                    )
                     .observeOn(schedulers.ui())
                     .doOnSubscribe {
                         isExecuting = true
@@ -57,6 +77,11 @@ class GetMoviesUseCase @Inject constructor(
             }
         )
     }
+
+    data class Input(
+        val page: Int,
+        val genreId: Int
+    )
 
     data class Output(
         val success: ((List<ResultMovie>) -> Unit)? = null,

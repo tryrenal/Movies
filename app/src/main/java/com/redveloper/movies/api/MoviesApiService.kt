@@ -1,5 +1,6 @@
 package com.redveloper.movies.api
 
+import com.redveloper.movies.api.response.GenresResponse
 import com.redveloper.movies.api.response.MoviesResponse
 import com.redveloper.movies.api.response.ResultMovieResponse
 import com.redveloper.movies.api.response.ReviewsResponse
@@ -11,9 +12,10 @@ import retrofit2.http.Query
 
 interface MoviesApiService{
 
-    @GET("/3/movie/now_playing")
+    @GET("/3/discover/movie")
     fun getListMovies(
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("with_genres") genreId: Int
     ) : Single<MoviesResponse>
 
     @GET("3/movie/{movie_id}")
@@ -30,4 +32,7 @@ interface MoviesApiService{
     fun getTraillerMovie(
         @Path("movie_id") id: Int
     ): Single<TrailersResponse>
+
+    @GET("/3/genre/movie/list")
+    fun getGenres() : Single<GenresResponse>
 }

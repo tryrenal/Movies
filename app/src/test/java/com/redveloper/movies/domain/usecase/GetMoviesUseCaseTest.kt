@@ -36,6 +36,7 @@ class GetMoviesUseCaseTest {
     @Test
     fun successExecute(){
         val page = 1
+        val genreId = 28
         val listMovie = listOf(
             ResultMovie(
                 adult = false,
@@ -70,11 +71,11 @@ class GetMoviesUseCaseTest {
         val usecaseOutput : GetMoviesUseCase.Output = mock()
 
         //given
-        whenever(movieRepository.getMovies(page)).thenReturn(Single.just(movies.copy()))
+        whenever(movieRepository.getMovies(page, genreId)).thenReturn(Single.just(movies.copy()))
         useCase.output = usecaseOutput
 
         //when
-        useCase.execute()
+        useCase.execute(genreId)
 
         //then verify
         verify(usecaseOutput).success?.invoke(listMovie)
@@ -91,16 +92,18 @@ class GetMoviesUseCaseTest {
     @Test
     fun errorExecute(){
         val page = 1
+        val genreId = 28
+
         val errorMessage = "error get data"
 
         val usecaseOutput : GetMoviesUseCase.Output = mock()
 
         //given
-        whenever(movieRepository.getMovies(page)).thenReturn(Single.error(Exception(errorMessage)))
+        whenever(movieRepository.getMovies(page, genreId)).thenReturn(Single.error(Exception(errorMessage)))
         useCase.output = usecaseOutput
 
         //when
-        useCase.execute()
+        useCase.execute(genreId)
 
         //then verify
         verify(usecaseOutput, never()).success?.invoke(any())
@@ -118,6 +121,7 @@ class GetMoviesUseCaseTest {
     fun successLoadMore(){
         val page = 1
         val nextPage = 2
+        val genreId = 28
 
         val listMovie = listOf(
             ResultMovie(
@@ -153,11 +157,11 @@ class GetMoviesUseCaseTest {
         val usecaseOutput : GetMoviesUseCase.Output = mock()
 
         //given
-        whenever(movieRepository.getMovies(page)).thenReturn(Single.just(movies.copy()))
+        whenever(movieRepository.getMovies(page,genreId)).thenReturn(Single.just(movies.copy()))
         useCase.output = usecaseOutput
 
         //given first execute
-        useCase.execute()
+        useCase.execute(genreId)
 
         //when
         useCase.loadMore()
@@ -178,6 +182,7 @@ class GetMoviesUseCaseTest {
     fun errorLoadMore(){
         val page = 1
         val nextPage = 2
+        val genreId = 28
 
         val listMovie = listOf(
             ResultMovie()
@@ -194,12 +199,12 @@ class GetMoviesUseCaseTest {
         val usecaseOutput: GetMoviesUseCase.Output = mock()
         useCase.output = usecaseOutput
         //given first execute
-        whenever(movieRepository.getMovies(page)).thenReturn(Single.just(movies))
-        useCase.execute()
+        whenever(movieRepository.getMovies(page, genreId)).thenReturn(Single.just(movies))
+        useCase.execute(genreId)
 
         //given
         clearInvocations(usecaseOutput)
-        whenever(movieRepository.getMovies(page)).thenReturn(Single.error(Exception(errorMessage)))
+        whenever(movieRepository.getMovies(page, genreId)).thenReturn(Single.error(Exception(errorMessage)))
 
         //when
         useCase.loadMore()
