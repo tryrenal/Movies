@@ -8,6 +8,7 @@ import com.redveloper.movies.domain.entity.Reviews
 import com.redveloper.movies.domain.entity.Trailer
 import com.redveloper.movies.domain.repository.api.MoviesApi
 import com.redveloper.movies.domain.repository.database.DetailMovieDatabase
+import com.redveloper.movies.domain.repository.database.GenreDatabase
 import com.redveloper.movies.utils.RxSchedulers
 import com.redveloper.movies.utils.convertDateStringToDate
 import io.reactivex.Single
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class MovieRepository @Inject constructor(
     private val moviesApi: MoviesApi,
     private val detailMovieDatabase: DetailMovieDatabase,
+    private val genreDatabase: GenreDatabase,
     private val schedulers: RxSchedulers
 ) {
 
@@ -71,7 +73,24 @@ class MovieRepository @Inject constructor(
     }
 
     fun getGenreMovie(): Single<List<Genre>>{
-        return moviesApi.getGenres()
-            .subscribeOn(schedulers.network())
+        return genreDatabase.getGenres()
+            .subscribeOn(schedulers.database())
+            .flatMap { data ->
+                if (!data.isNullOrEmpty()){
+                    Single.just(data)
+                } else {
+                    Single.error(Exception("list genre null"))
+                }
+            }
+            .onErrorResumeNext(
+                moviesApi.getGenres()
+                    .doOnSuccess { data ->
+                        genreDatabase
+                            .insertGenres(data)
+                            .subscribeOn(schedulers.database())
+                            .subscribe()
+                    }
+                    .subscribeOn(schedulers.network())
+            )
     }
 }
