@@ -1,5 +1,6 @@
 package com.redveloper.movies.api
 
+import com.redveloper.movies.api.response.GenresResponse
 import com.redveloper.movies.api.response.MoviesResponse
 import com.redveloper.movies.api.response.ResultMovieResponse
 import com.redveloper.movies.api.response.ReviewsResponse
@@ -30,4 +31,7 @@ interface MoviesApiService{
     fun getTraillerMovie(
         @Path("movie_id") id: Int
     ): Single<TrailersResponse>
+
+    @GET("/3/genre/movie/list")
+    fun getGenres() : Single<GenresResponse>
 }

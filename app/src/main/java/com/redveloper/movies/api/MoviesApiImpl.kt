@@ -1,5 +1,6 @@
 package com.redveloper.movies.api
 
+import com.redveloper.movies.domain.entity.Genre
 import com.redveloper.movies.domain.entity.Movies
 import com.redveloper.movies.domain.entity.ResultMovie
 import com.redveloper.movies.domain.entity.Reviews
@@ -32,5 +33,10 @@ class MoviesApiImpl @Inject constructor(
                 Trailer()
             }
         }
+    }
+
+    override fun getGenres(): Single<List<Genre>> {
+        return moviesApiService.getGenres()
+            .map { it.genres.map { it.toGenre() } }
     }
 }
