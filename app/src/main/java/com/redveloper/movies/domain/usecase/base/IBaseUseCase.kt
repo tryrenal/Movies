@@ -2,7 +2,7 @@ package com.redveloper.movies.domain.usecase.base
 
 import io.reactivex.disposables.Disposable
 
-interface IBaseUseaCase {
+interface IBaseUseCase {
     fun addDisposable(disposable: Disposable)
 
     fun clear()

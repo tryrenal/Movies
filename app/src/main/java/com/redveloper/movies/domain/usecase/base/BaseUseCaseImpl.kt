@@ -12,7 +12,7 @@ import javax.inject.Inject
 class BaseUseCaseImpl @Inject constructor(
     private val schedulers: RxSchedulers,
     private val context: Context
-): IBaseUseaCase {
+): IBaseUseCase {
 
     val disposeables = CompositeDisposable()
 
@@ -24,7 +24,7 @@ class BaseUseCaseImpl @Inject constructor(
         disposeables.clear()
     }
 
-    override fun allowExecute(allow: IBaseUseaCase.AllowExecuteCallback) {
+    override fun allowExecute(allow: IBaseUseCase.AllowExecuteCallback) {
         if (isInternetAvailable()){
             allow.allow()
         } else {

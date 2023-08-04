@@ -2,7 +2,7 @@ package com.redveloper.movies.domain.usecase.base
 
 import io.reactivex.disposables.Disposable
 
-abstract class BaseUseCase (private val baseUseaCase: IBaseUseaCase){
+abstract class BaseUseCase (private val baseUseaCase: IBaseUseCase){
 
     protected var isExecuting = false
 
@@ -10,7 +10,7 @@ abstract class BaseUseCase (private val baseUseaCase: IBaseUseaCase){
         allow: () -> Unit,
         notInternet: () -> Unit
     ){
-        baseUseaCase.allowExecute(object : IBaseUseaCase.AllowExecuteCallback{
+        baseUseaCase.allowExecute(object : IBaseUseCase.AllowExecuteCallback{
             override fun allow() {
                 allow.invoke()
             }
