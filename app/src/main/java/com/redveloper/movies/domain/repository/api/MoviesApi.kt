@@ -8,7 +8,7 @@ import com.redveloper.movies.domain.entity.Trailer
 import io.reactivex.Single
 
 interface MoviesApi {
-    fun getMovies(page: Int): Single<Movies>
+    fun getMovies(page: Int, genreId: Int): Single<Movies>
     fun getDetailMovie(id: Int): Single<ResultMovie>
     fun getReviewMovie(id: Int): Single<Reviews>
     fun getTrailer(id: Int): Single<Trailer>

@@ -32,9 +32,9 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    fun getMovies(){
+    fun getMovies(genreId: Int){
         setLoading(true)
-        getMoviesUseCase.execute()
+        getMoviesUseCase.execute(genreId = genreId)
     }
 
     fun loadMoreMovies(){

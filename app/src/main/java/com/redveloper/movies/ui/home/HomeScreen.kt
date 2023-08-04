@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.redveloper.movies.R
 import com.redveloper.movies.ui.home.model.MoviesUiModel
@@ -50,7 +52,9 @@ import dagger.Lazy
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
-    toDetailMovie: ((movieId: Int) -> Unit)
+    toDetailMovie: ((movieId: Int) -> Unit),
+    genreId: Int,
+    genreName: String
 ){
     val movieEvents = viewModel.moviesEvent.observeAsState()
     val errorEvents = viewModel.showErrorEvent.observeAsState()
@@ -60,7 +64,7 @@ fun HomeScreen(
 
     LaunchedEffect(true){
         moviesUiModel.clear()
-        viewModel.getMovies()
+        viewModel.getMovies(genreId)
     }
 
     movieEvents.value?.contentIfNotHaveBeenHandle?.let {
@@ -83,7 +87,8 @@ fun HomeScreen(
         },
         onClickMovie = { id ->
             toDetailMovie(id)
-        }
+        },
+        genreName = genreName
     )
 
     loadingEvents.value?.contentIfNotHaveBeenHandle?.let { show ->
@@ -105,37 +110,55 @@ fun HomeContent(
     modifier: Modifier = Modifier,
     listMovie: List<MoviesUiModel>,
     scrollToBottomCallback: (() -> Unit)? = null,
-    onClickMovie: ((movieId: Int) -> Unit)? = null
+    onClickMovie: ((movieId: Int) -> Unit)? = null,
+    genreName: String
 ){
+
     val listState = rememberLazyGridState()
 
-    LazyVerticalGrid(
-        modifier = modifier
-            .fillMaxSize(),
-        columns = GridCells.Fixed(2),
-        state = listState,
-        content = {
-            itemsIndexed(items = listMovie){ index, item ->
-                CardMovie(
-                    urlImage = item.urlImage,
-                    text = item.movieTitle,
-                    modifier = Modifier
-                        .padding(bottom = 10.dp)
-                        .clickable {
-                            onClickMovie?.invoke(item.id)
-                        }
+    Column(modifier = modifier.fillMaxSize()) {
+        Text(
+            text = genreName,
+            style = TextStyle(
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = 20.dp,
+                    start = 8.dp,
+                    end = 8.dp
                 )
-            }
-        }
-    )
+        )
 
-    listState.OnBottomReached {
-        scrollToBottomCallback?.invoke()
+        LazyVerticalGrid(
+            modifier = Modifier.fillMaxSize(),
+            columns = GridCells.Fixed(2),
+            state = listState,
+            content = {
+                itemsIndexed(items = listMovie) { index, item ->
+                    CardMovie(
+                        urlImage = item.urlImage,
+                        text = item.movieTitle,
+                        modifier = Modifier
+                            .padding(bottom = 10.dp)
+                            .clickable {
+                                onClickMovie?.invoke(item.id)
+                            }
+                    )
+                }
+            }
+        )
+
+        listState.OnBottomReached {
+            scrollToBottomCallback?.invoke()
+        }
     }
 }
 
 @Composable
-private fun LazyGridState.OnBottomReached(
+fun LazyGridState.OnBottomReached(
     buffer : Int = 0,
     onLoadMore : () -> Unit
 ) {
@@ -174,7 +197,8 @@ fun PreviewHomeContent(){
             listMovie = datas,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(10.dp)
+                .padding(10.dp),
+            genreName = "Action"
         )
     }
 }

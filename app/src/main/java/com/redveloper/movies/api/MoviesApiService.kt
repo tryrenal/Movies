@@ -12,9 +12,10 @@ import retrofit2.http.Query
 
 interface MoviesApiService{
 
-    @GET("/3/movie/now_playing")
+    @GET("/3/discover/movie")
     fun getListMovies(
-        @Query("page") page: Int
+        @Query("page") page: Int,
+        @Query("with_genres") genreId: Int
     ) : Single<MoviesResponse>
 
     @GET("3/movie/{movie_id}")
