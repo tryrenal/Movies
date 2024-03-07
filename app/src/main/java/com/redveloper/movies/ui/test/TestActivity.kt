@@ -40,10 +40,13 @@ class TestActivity : AppCompatActivity() {
         getData()
 
         etSearch.setOnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH)
+            if (actionId == EditorInfo.IME_ACTION_SEARCH){
+                testAdapter.filter.filter(v.text)
                 true
-            else
+            }
+            else {
                 false
+            }
         }
     }
 
