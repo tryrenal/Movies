@@ -6,6 +6,7 @@ import com.redveloper.movies.ui.ViewModelFactory
 import com.redveloper.movies.ui.detail.DetailViewModel
 import com.redveloper.movies.ui.genre.GenreViewModel
 import com.redveloper.movies.ui.home.HomeViewModel
+import com.redveloper.movies.ui.test.TestViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -32,4 +33,10 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(GenreViewModel::class)
     abstract fun bindGenreViewModel(genreViewModel: GenreViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TestViewModel::class)
+    abstract fun bindTestViewModel(viewModel: TestViewModel): ViewModel
+
 }

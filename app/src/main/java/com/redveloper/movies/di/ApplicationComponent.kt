@@ -5,9 +5,11 @@ import com.redveloper.movies.ui.home.MainActivity
 import com.redveloper.movies.MyApp
 import com.redveloper.movies.ui.detail.DetailMovieActivity
 import com.redveloper.movies.ui.genre.GenreActivity
+import com.redveloper.movies.ui.test.TestActivity
 import dagger.BindsInstance
 import dagger.Component
 import retrofit2.Retrofit
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Singleton
@@ -30,9 +32,14 @@ interface ApplicationComponent {
     }
 
     fun retrofit(): Retrofit
+
+    @Named("TestRetrofit")
+    fun testRetrofit(): Retrofit
+
     fun viewModelProviderFactory(): ViewModelProvider.Factory
 
     fun inject(mainActivity: MainActivity)
     fun inject(detailMovieActivity: DetailMovieActivity)
     fun inject(genreActivity: GenreActivity)
+    fun inject(activity: TestActivity)
 }
