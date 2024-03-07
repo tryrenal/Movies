@@ -12,10 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.redveloper.movies.MyApp
 import com.redveloper.movies.R
+import com.redveloper.movies.domain.entity.TestModel
 import com.redveloper.movies.ui.ViewModelFactory
+import com.redveloper.movies.ui.testdetail.TestDetailActivity
 import javax.inject.Inject
 
-class TestActivity : AppCompatActivity() {
+class TestActivity : AppCompatActivity(), TestAdapter.Callback {
 
     lateinit var recyclerView: RecyclerView
     lateinit var etSearch: EditText
@@ -68,10 +70,15 @@ class TestActivity : AppCompatActivity() {
 
     private fun init(){
         testAdapter = TestAdapter()
+        testAdapter.setCallback(this)
 
         recyclerView = findViewById<RecyclerView>(R.id.recycler)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         etSearch = findViewById<EditText>(R.id.edtSearch)
+    }
+
+    override fun onClickItem(data: TestModel) {
+        TestDetailActivity.navigation(this@TestActivity, data)
     }
 }

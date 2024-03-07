@@ -15,12 +15,18 @@ class TestAdapter : RecyclerView.Adapter<TestAdapter.TestViewHolder>(), Filterab
     private var data: ArrayList<TestModel> = arrayListOf()
     private var dataFilter: ArrayList<TestModel> = arrayListOf()
 
+    private var callback: Callback? = null
+
     fun setData(data: List<TestModel>?){
         if(!data.isNullOrEmpty()){
             this.data.addAll(data)
             this.dataFilter.addAll(data)
             notifyDataSetChanged()
         }
+    }
+
+    fun setCallback(callback: Callback){
+        this.callback = callback
     }
 
     class TestViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
@@ -46,6 +52,11 @@ class TestAdapter : RecyclerView.Adapter<TestAdapter.TestViewHolder>(), Filterab
 
         holder.tvTitle.text = dataFilter[position].title
         holder.tvDesc.text = dataFilter[position].body
+
+        holder.itemView.setOnClickListener {
+            if(this.callback != null)
+                this.callback?.onClickItem(dataFilter[position])
+        }
     }
 
     override fun getFilter(): Filter {
@@ -75,5 +86,9 @@ class TestAdapter : RecyclerView.Adapter<TestAdapter.TestViewHolder>(), Filterab
             }
 
         }
+    }
+
+    interface Callback{
+        fun onClickItem(data: TestModel)
     }
 }
